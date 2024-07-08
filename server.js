@@ -46,9 +46,21 @@ app.post('/submit', upload.single('image'), async (req, res) => {
   const { licensePlate, state, bumperSticker } = req.body;
   const image = req.file ? '/uploads/' + req.file.filename : '';
 
-  const newPlate = new Plate({ licensePlate, state, bumperSticker, image });
-  await newPlate.save();
-  res.send('Information submitted successfully!');
+  // Check if a document with the same licensePlate and state already exists
+  let existingPlate = await Plate.findOne({ licensePlate, state });
+
+  if (existingPlate) {
+    // Update existing document
+    existingPlate.bumperSticker = bumperSticker;
+    existingPlate.image = image;
+    await existingPlate.save();
+    res.send('Information updated successfully!');
+  } else {
+    // Create new document
+    const newPlate = new Plate({ licensePlate, state, bumperSticker, image });
+    await newPlate.save();
+    res.send('Information submitted successfully!');
+  }
 });
 
 app.get('/lookup/:licensePlate/:state', async (req, res) => {
