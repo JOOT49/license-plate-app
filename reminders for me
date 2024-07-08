@@ -1,25 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>License Plate Lookup</title>
-</head>
-<body>
-  <h1>License Plate Lookup</h1>
+brew services start mongodb/brew/mongodb-community
+brew services stop mongodb/brew/mongodb-community
 
-  <div>
-    <p><a href="/input.html">Input New Data</a></p>
-  </div>
 
-  <div>
-    <h2>Lookup License Plate</h2>
-    <label for="lookupPlate">License Plate:</label>
-    <input type="text" id="lookupPlate" placeholder="Enter license plate"><br><br>
-    <label for="lookupState">State:</label>
-    <select id="lookupState">
-      <!-- Dropdown options for all states -->
-      <option value="AL">Alabama</option>
+
+   <option value="AL">Alabama</option>
       <option value="AK">Alaska</option>
       <option value="AZ">Arizona</option>
       <option value="AR">Arkansas</option>
@@ -69,34 +53,3 @@
       <option value="WV">West Virginia</option>
       <option value="WI">Wisconsin</option>
       <option value="WY">Wyoming</option>
-    </select><br><br>
-    <button onclick="lookupPlate()">Lookup</button>
-  </div>
-
-  <div id="result"></div>
-
-  <script>
-    async function lookupPlate() {
-      const plate = document.getElementById('lookupPlate').value;
-      const state = document.getElementById('lookupState').value;
-      const response = await fetch(`/lookup/${plate}/${state}`);
-      const data = await response.json();
-      
-      if (data) {
-        document.getElementById('result').innerHTML = `
-          <h3>Result</h3>
-          <p>License Plate: ${data.licensePlate}</p>
-          <p>State: ${data.state}</p>
-          <p>Bumper Sticker: ${data.bumperSticker}</p>
-          ${data.image ? `<img src="${data.image}" alt="Bumper Sticker Image" width="200">` : ''}
-        `;
-      } else {
-        document.getElementById('result').innerHTML = `
-          <h3>No information found</h3>
-          <p>Please submit information for this license plate and state.</p>
-        `;
-      }
-    }
-  </script>
-</body>
-</html>

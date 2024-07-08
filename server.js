@@ -11,6 +11,9 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Serve static files from the uploads directory
+app.use('/uploads', express.static('uploads'));
+
 // Set up storage for image uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -31,17 +34,17 @@ const plateSchema = new Schema({
   licensePlate: String,
   state: String,
   bumperSticker: String,
-  image: String
+  image: String // Store the path to the image in MongoDB
 });
 const Plate = mongoose.model('Plate', plateSchema);
 
-// Serve static files
+// Serve static files (not necessary if you already have this)
 app.use(express.static('public'));
 
 // Routes
 app.post('/submit', upload.single('image'), async (req, res) => {
   const { licensePlate, state, bumperSticker } = req.body;
-  const image = req.file ? req.file.path : '';
+  const image = req.file ? '/uploads/' + req.file.filename : '';
 
   const newPlate = new Plate({ licensePlate, state, bumperSticker, image });
   await newPlate.save();
