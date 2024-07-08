@@ -1,1 +1,1 @@
-Very smol app for HackClub arcade !
+Trying to remember how all this coding stuff works!
