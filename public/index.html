@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>License Plate Lookup</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .form-section { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>License Plate Lookup</h1>
+
+  <div class="form-section">
+    <form id="submitForm" enctype="multipart/form-data">
+      <label for="licensePlate">License Plate:</label>
+      <input type="text" id="licensePlate" name="licensePlate" required><br><br>
+      <label for="state">State:</label>
+      <input type="text" id="state" name="state" required><br><br>
+      <label for="bumperSticker">Bumper Sticker:</label>
+      <input type="text" id="bumperSticker" name="bumperSticker" required><br><br>
+      <label for="image">Image:</label>
+      <input type="file" id="image" name="image"><br><br>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <div class="form-section">
+    <h2>Lookup License Plate</h2>
+    <label for="lookupPlate">License Plate:</label>
+    <input type="text" id="lookupPlate" placeholder="Enter license plate"><br><br>
+    <label for="lookupState">State:</label>
+    <input type="text" id="lookupState" placeholder="Enter state"><br><br>
+    <button onclick="lookupPlate()">Lookup</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('submitForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      const response = await fetch('/submit', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.text();
+      alert(result);
+    });
+
+    async function lookupPlate() {
+      const plate = document.getElementById('lookupPlate').value;
+      const state = document.getElementById('lookupState').value;
+      const response = await fetch(`/lookup/${plate}/${state}`);
+      const data = await response.json();
+      
+      if (data) {
+        document.getElementById('result').innerHTML = `
+          <h3>Result</h3>
+          <p>License Plate: ${data.licensePlate}</p>
+          <p>State: ${data.state}</p>
+          <p>Bumper Sticker: ${data.bumperSticker}</p>
+          ${data.image ? `<img src="${data.image}" alt="Bumper Sticker Image" width="200">` : ''}
+        `;
+      } else {
+        document.getElementById('result').innerHTML = `
+          <h3>No information found</h3>
+          <p>Please submit information for this license plate and state.</p>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
